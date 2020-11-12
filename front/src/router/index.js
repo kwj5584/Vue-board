@@ -1,10 +1,12 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-import List from '../views/List.vue'
-import ListAdd from '../views/ListAdd.vue'
-import DetailList from '../views/DetailList.vue'
-import UpdatePage from '../views/UpdatePage.vue'
+import List from '../views/board/List.vue'
+import ListAdd from '../views/board/ListAdd.vue'
+import DetailList from '../views/board/DetailList.vue'
+import UpdatePage from '../views/board/UpdatePage.vue'
+import Login from '../views/Login/Login.vue';
+import Signup from '../views/Login/Signup.vue';
 
 Vue.use(VueRouter)
 
@@ -15,25 +17,35 @@ const routes = [
     component: Home
   },
   {
-    path: '/listAdd',
+    path: '/board/listAdd',
     name: "ListAdd",
     component: ListAdd
   },
   {
-    path:'/list',
+    path:'/board/list',
     name:'List',
     compoenet:List
   },
   {
-    path:'/detailList',
+    path:'/board/detailList',
     name:'DetailList',
     component:DetailList,
     props:true
   },
   {
-    path:'/updatePage',
+    path:'/board/updatePage',
     name:'UpdatePage',
     component:UpdatePage
+  },
+  {
+    path:'/user/login',
+    name:'Login',
+    component:Login
+  },
+  {
+    path:'/user/signup',
+    name:'Signup',
+    component:Signup
   }
 ]
 
