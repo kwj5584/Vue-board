@@ -2,54 +2,79 @@ const express = require('express');
 const router = express.Router();
 const userList = require('../models/userList');
 const bcrypt = require('bcrypt');
+const { body, validationResult } = require('express-validator');
 const cors = require('cors');
 router.use(cors())
 const bodyParser = require('body-parser');
+
 router.use(bodyParser.json());
 
-router.post('/signup',(req,res,next)=> {
+router.post('/signup', [
+  body('email')
+  .custom((value)=>{
+   return userList.findOne({email:value}).then((userDoc)=>{
+    if(userDoc){
+      return Promise.reject('Email alerady exist!')
+    }
+    });
+  })
+],
+async (req,res,next)=> {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    const error = new Error('Validation failed');
+    error.statusCode = 422;
+    error.data = errors.array();
+    return next(error);
+}
+
   const email = req.body.email;
   const password = req.body.password;
-  const name = req.body.name;
+  // const name = req.body.name;
 
   try{
-    const hashedPassword = bcrypt.hash(password,12);
+    const hashedPassword = await bcrypt.hash(password, 12);
 
-    const user = new userList({
+    const userlist = new userList({
       email,
       password : hashedPassword,
-      name
+      // name
     });
 
-    const result = user.save();
+    const result = await userlist.save();
     console.log('new user is :',result)
     res.status(201).json({
       message : 'user created',
       userId : result._id
     })
   }catch(err){
-    console.log(err)
+    if(!err.statusCode){
+      err.statusCode=500;
+    }
+    next(err);
   }
 });
 
-router.post('/login', (req,res)=>{
+router.post('/login', async(req,res)=>{
   const email = req.body.email;
   const password = req.body.password;
 
-  const hashedPassword = bcrypt.hash(password,12);
-
-  userList.findOne({email},(err,user)=>{
+  userList.findOne({email}, async (err,user)=>{
     if(err){
       return res.json({
         message : 'Email이 유효하지않습니다.'
       })
-    }
-  })
-  userList.findOne({password:hashedPassword},(err,user)=>{
-    if(err){
-      return res.json({
-        message : '패스워드가 잘못되었습니다.'
-      })
+    }else{
+      //console.log('user is :',user)
+      await bcrypt.compare(password, user.password).then((err,compare)=>{
+        if(err){
+          return res.json({
+            message:'Password가 유효하지 않습니다.'
+          })
+      }else{
+        console.log(compare.data);
+      }})
     }
   })
 })

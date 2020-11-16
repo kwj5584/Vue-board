@@ -4,7 +4,7 @@ const autoIncrement = require('mongoose-auto-increment');
 const Schema = mongoose.Schema;
 const dotenv = require('dotenv');
 dotenv.config();
-const url = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.3tudg.mongodb.net/Clusters?retryWrites=true&w=majority`
+
 mongoose.set('useCreateIndex', true)
 const userConnection = mongoose.createConnection(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.3tudg.mongodb.net/Clusters?retryWrites=true&w=majority`)
 
@@ -20,11 +20,7 @@ const userSchema = new Schema({
     type:String,
     required:true
   },
-  name:{
-    type:String,
-    required:true
-  }
-})
+},{collection : 'userlist'})
 
 autoIncrement.initialize(userConnection);
 

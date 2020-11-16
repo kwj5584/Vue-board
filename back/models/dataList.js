@@ -5,14 +5,7 @@ const Schema = mongoose.Schema;
 const dotenv = require('dotenv')
 
 dotenv.config();
-const url = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.3tudg.mongodb.net/Clusters?retryWrites=true&w=majority`
 
-// const boardConnection = mongoose.createConnection(url,(err,database)=>{
-//     if(err){
-//        console.error(err);
-//       }
-//       db = database;
-//   })
 const boardConnection = mongoose.createConnection(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.3tudg.mongodb.net/Clusters?retryWrites=true&w=majority`);
 
 
@@ -28,7 +21,11 @@ const dataSchema = new Schema({
     type : String,
     requried:true
   },
-})
+  writer:{
+    type:String,
+    required:true
+  }
+},{collection : 'datalists'})
 
 autoIncrement.initialize(boardConnection);
 
