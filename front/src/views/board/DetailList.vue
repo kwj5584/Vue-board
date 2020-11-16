@@ -39,29 +39,30 @@ export default {
       this.$router.push({name:'Home'})
     },
       onDelete(){
-        // const passwd = prompt('비밀번호 입력');
+         const passwd = prompt('비밀번호 입력');
         const getId = this.$route.query.id
+        if(this.$store.state.user.password === passwd){
         this.$store.dispatch('deleteList',getId);
           alert("삭제되었습니다.")
           this.$router.push({name:'Home'})
           window.location.reload();  
-        // if(this.$store.state.user.password === passwd){
+         
           
-        // }
-        // else{ alert('비밀번호가 다릅니다.');}
+        }
+        else{ alert('비밀번호가 다릅니다.');}
        },
 
       onUpdate(){
-          this.$router.push({name : 'UpdatePage', query: { id: this.$route.query.id }})
-        // const passwd = prompt('비밀번호를 입력하세요');
-      //   if(this.$store.state.user.password === passwd){
-
+        console.log(Storage.getItem());
+        const passwd = prompt('비밀번호를 입력하세요');
+        if(this.$store.state.user.password === passwd){
+        this.$router.push({name : 'UpdatePage', query: { id: this.$route.query.id }})
+       }
+       else{
+         alert('비밀번호가 다릅니다.');
+         window.location.reload();
       //  }
-      //  else{
-      //    alert('비밀번호가 다릅니다.');
-      //    window.location.reload();
-      //  }
-      // }
+      }
     }
     }
 };

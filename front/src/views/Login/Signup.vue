@@ -9,12 +9,12 @@
     />
     </label>
     <br>
-    <input  
+    <!-- <input  
     type='text'
     v-model="$store.state.user.name"
     placeholder="Name"
     required
-    />
+    /> -->
     <br>
     <input type="password"
     v-model="$store.state.user.password"
@@ -26,6 +26,7 @@
     v-model="$store.state.user.passwordConfirm"
     placeholder="PasswordConfirm"
     required
+    @keyup.enter="submit"
     >
     <br>
     <button @click='submit'>SignUp</button>
@@ -42,7 +43,7 @@ export default {
       }
       else{
         this.$store.dispatch('SignupProcess');
-        this.$router.push({name:'Login'})
+        
       }
     },
     back(){

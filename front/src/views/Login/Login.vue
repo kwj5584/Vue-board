@@ -1,8 +1,18 @@
 <template>
   <div>
-    <input type="email" placeholder="Enter E-mail" v-model='$store.state.user.email'>
+    <input 
+    type="email" 
+    placeholder="Enter E-mail" 
+    v-model='$store.state.user.email'
+    @keyup.enter="login"
+    >
     <br>
-    <input type="password" placeholder="Enter Password" v-model="$store.state.user.password">
+    <input 
+    type="password" 
+    placeholder="Enter Password" 
+    v-model="$store.state.user.password"
+    @keyup.enter="login"
+    >
     <br>
     
     <button @click='login'>Login</button>
@@ -16,7 +26,6 @@ export default {
   methods:{
     login(){
       this.$store.dispatch('LoginProcess');
-      
     },
     back(){
       this.$router.push({name:"Home"})

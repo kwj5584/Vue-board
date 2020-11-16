@@ -13,7 +13,7 @@
        <tr>
          <td width="10%">{{idx+1}}</td>
          <td width="60%">{{result.title}}</td>
-         <!-- <td width="30%">{{result.user.name}}</td> -->
+         <td width="30%">{{result.writer}}</td>
        </tr>
      </tbody>
    </table>
