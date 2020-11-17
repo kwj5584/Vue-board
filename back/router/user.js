@@ -31,7 +31,7 @@ async (req,res,next)=> {
 
   const email = req.body.email;
   const password = req.body.password;
-  // const name = req.body.name;
+  const name = req.body.name;
 
   try{
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -39,7 +39,7 @@ async (req,res,next)=> {
     const userlist = new userList({
       email,
       password : hashedPassword,
-      // name
+      name
     });
 
     const result = await userlist.save();
@@ -56,27 +56,48 @@ async (req,res,next)=> {
   }
 });
 
-router.post('/login', async(req,res)=>{
-  const email = req.body.email;
-  const password = req.body.password;
-
-  userList.findOne({email}, async (err,user)=>{
-    if(err){
-      return res.json({
-        message : 'Email이 유효하지않습니다.'
-      })
-    }else{
-      //console.log('user is :',user)
-      await bcrypt.compare(password, user.password).then((err,compare)=>{
-        if(err){
-          return res.json({
-            message:'Password가 유효하지 않습니다.'
-          })
-      }else{
-        console.log(compare.data);
-      }})
-    }
+router.post('/login', async(req)=>{
+    const email = req.body.email;
+    const password = req.body.password;
+    console.log('type:',typeof(email))
+    console.log(email,'\n',password);
+    userList.findOne({email}, async (err,user)=>{
+      if(!user){
+        console.log('이메일이 유효하지않습니다.');
+      }
+      else{
+        console.log('login:',  user);
+        const result = await bcrypt.compareSync(password,user.password);
+        if(result===false){
+          console.log('비밀번호 틀립니다.')
+        }
+        else{
+          console.log('로그인 성공')
+        }
+      }
+    })
+    
   })
-})
 
+//   userList.findOne({email}, async (user)=>{
+//     if(!user){
+//       console.log('Email이 유효하지않습니다.')
+//     }
+//     else{
+//       console.log(user);
+//     }
+//   });
+//   userList.findOne({email}, async(user)=>{
+//       console.log('user password :',password ,'dbpassword : ',user.password)
+//       console.log(hashedPassword)
+//       const result =  await bcrypt.compare(password, user.password);
+//       if(result===false){
+//         console.log('비밀번호가 다릅니다.');
+//       }
+//       else{
+//         console.log('login success');
+//       }
+//   } 
+// )
+// })
 module.exports = router;
