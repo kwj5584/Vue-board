@@ -26,9 +26,7 @@ router.post('/listAdd', async (req,res)=>{
       writer,
       contents
     });
-     
     const result = await datalist.save();
-
     res.status(201).json({
       message: 'data created',
       userId : result._id
@@ -43,6 +41,24 @@ router.get(`/detailList`, (req,res) =>{ // 세부페이지에 부를 내용
   dataList.findOne({ _id : getId }, { title:1,  contents:1,writer:1 },(err,datalist)=>{
     if(err) return res.status(500).send({error : err});
     if(!datalist) return res.status(404).send({error: 'List not found'});
+    res.send(datalist);
+  })
+})
+
+router.post('/findDetailTitle',(req,res)=>{
+  console.log('request : ',req.body.payload)
+  dataList.find({title: {$regex : req.body.payload } },{title:1, writer:1},(err,datalist)=>{
+    if(err) return res.status(500).send({error : err});
+    if(!datalist) return res.status(404).send({error : 'List not found'});
+    res.send(datalist);
+  })
+})
+
+router.post('/findDetailWriter',(req,res)=>{
+  console.log('request : ',req.body.payload)
+  dataList.find({writer: {$regex : req.body.payload } },{title:1, writer:1},(err,datalist)=>{
+    if(err) return res.status(500).send({error : err});
+    if(!datalist) return res.status(404).send({error : 'List not found'});
     res.send(datalist);
   })
 })

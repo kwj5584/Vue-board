@@ -56,29 +56,30 @@ async (req,res,next)=> {
   }
 });
 
-router.post('/login', async(req)=>{
+router.post('/login', async(req,res,next)=>{
     const email = req.body.email;
     const password = req.body.password;
     console.log('type:',typeof(email))
     console.log(email,'\n',password);
     userList.findOne({email}, async (err,user)=>{
       if(!user){
-        console.log('이메일이 유효하지않습니다.');
+        return Promise.reject('Email not exist!')
       }
       else{
         console.log('login:',  user);
         const result = await bcrypt.compareSync(password,user.password);
         if(result===false){
-          console.log('비밀번호 틀립니다.')
+          return Promise.reject('Password invalid')
         }
         else{
-          console.log('로그인 성공')
+          res.status(201).json({
+            message : 'Login Success'
+          })
         }
       }
     })
     
-  })
-
+  });
 //   userList.findOne({email}, async (user)=>{
 //     if(!user){
 //       console.log('Email이 유효하지않습니다.')
