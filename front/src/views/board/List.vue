@@ -1,19 +1,44 @@
 <template>
  <div>
+   <div class="search">
+     <select name="searchType" style='height:22px' @change='onChange($event)' v-model='key'>
+       <option value="title">Title</option>
+       <option value="writer">Writer</option>
+     </select>
+     <template v-if='this.key==="title"'>
+      <input
+    type="text"
+    style="width:25%" 
+    placeholder='Search Title..' 
+    v-model='$store.state.findDetail'
+    @keyup='findDetailTitle'
+   >
+     </template>
+     <template v-if='this.key==="writer"'>
+      <input
+    type="text"
+    style="width:25%" 
+    placeholder='Search Writer..' 
+    v-model='$store.state.findDetail'
+    @keyup='findDetailWriter'
+   >
+     </template>
+
+     </div>
    <h1 style='text-align:center'>toast-ui editor</h1>
-   <table class='table'>
+   <table class='board'>
      <thead>
-       <tr >
+       <tr class='tr'>
          <th>글번호</th>
          <th>제목</th>
          <th>작성자</th>
        </tr>
      </thead>
      <tbody @click='detail(result)' v-for='(result,idx) in $store.state.results' :key="result.idx">
-       <tr>
-         <td width="10%">{{idx+1}}</td>
-         <td width="60%">{{result.title}}</td>
-         <td width="30%">{{result.writer}}</td>
+       <tr class='tr'>
+         <td class='td' width="10%">{{idx+1}}</td>
+         <td class='td' width="60%">{{result.title}}</td>
+         <td class='td' width="30%">{{result.writer}}</td>
        </tr>
      </tbody>
    </table>
@@ -28,13 +53,20 @@
 <script>
 
 export default {
-  
+  data(){
+    return{
+    key:'title'
+    }
+  },
   created() {
     this.$store.dispatch('getList');
   },
   components:{
   },
   methods:{
+    onChange(event){
+      this.key=event.target.value
+    },
     write(){
       if(this.$store.state.isLogin==='N'){
         alert('로그인 먼저 하세요');
@@ -49,26 +81,50 @@ export default {
       console.log('clicked id is', result._id)
       this.$router.push({ name: 'DetailList', query: {id: result._id }
       })
-     }
+     },
+     findDetailTitle(){
+       const find = this.$store.state.findDetail
+       if(find !== ''){
+       this.$store.dispatch('FindDetailTitle',find)
+       }
+       else{
+         this.$store.dispatch('getList')
+       }
+     },
+    findDetailWriter(){
+       const find = this.$store.state.findDetail
+       if(find !== ''){
+       this.$store.dispatch('FindDetailWriter',find)
+       }
+       else{
+         this.$store.dispatch('getList')
+       }
+     },
+
   }
 }
 </script>
 
 <style>
-table{
+.board{
   margin:auto;
   justify-content: center;
   max-width:1000px;
 }
-tr{
+.tr{
   border:1px solid black;
   text-align:center;
 }
-td{ 
+.td{ 
   border: 1px solid black;
   text-overflow:clip;
 }
 button{
   margin:auto;
+}
+.search{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

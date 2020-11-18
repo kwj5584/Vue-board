@@ -19,16 +19,22 @@
   <button @click='onDelete'>삭제</button>
   <button @click='onUpdate'>수정하기</button>
 </div>
+<hr><br><br><br><br>
+
+<div>
+  <Comments></Comments>
+</div>
 </div>  
 </template>
 
 <script>
 import '@toast-ui/editor/dist/toastui-editor-viewer.css'; // Editor's Style
 import { Viewer } from '@toast-ui/vue-editor'
-
+import Comments from '@/views/board/Comments'
 export default {
  components: { 
-   viewer: Viewer
+   viewer: Viewer,
+   Comments : Comments
     },
     created(){
       const getId = this.$route.query.id
@@ -46,14 +52,11 @@ export default {
           alert("삭제되었습니다.")
           this.$router.push({name:'Home'})
           window.location.reload();  
-         
-          
         }
         else{ alert('비밀번호가 다릅니다.');}
        },
 
       onUpdate(){
-        console.log(Storage.getItem());
         const passwd = prompt('비밀번호를 입력하세요');
         if(this.$store.state.user.password === passwd){
         this.$router.push({name : 'UpdatePage', query: { id: this.$route.query.id }})
@@ -63,7 +66,7 @@ export default {
          window.location.reload();
       //  }
       }
-    }
+    },
     }
 };
 </script>
