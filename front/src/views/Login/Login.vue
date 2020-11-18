@@ -28,6 +28,7 @@ export default {
       this.$store.dispatch('LoginProcess');
     },
     back(){
+      this.$store.commit('logout')
       this.$router.push({name:"Home"})
     },
     signup(){

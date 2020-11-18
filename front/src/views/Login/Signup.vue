@@ -43,11 +43,11 @@ export default {
       }
       else{
         this.$store.dispatch('SignupProcess');
-        
       }
     },
     back(){
-      this.$router.push({name:"Home"})
+      this.$store.commit('logout');
+      this.$router.push({name:"Home"});
     }
   }
 }
