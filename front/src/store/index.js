@@ -2,15 +2,15 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios';
 import router from '../router'
-import createPersistedState from 'vuex-persistedstate';
+import createPersistedState from 'vuex-persistedstate'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    userInfno : null,
     title : '',
     contents : null,
+    findDetail : '',
     results : [],
     isLogin : 'N',
 
@@ -19,6 +19,13 @@ export default new Vuex.Store({
       password:'',
       passwordConfirm:''
     },
+    comments:[
+    {
+      commentsId:'',
+      commentsPassword:'',
+      commentsContents:''
+    }
+    ],
 
     editorOptions:{
       useCommandShortcut:false,
@@ -28,6 +35,7 @@ export default new Vuex.Store({
     }
 
   },
+ 
   mutations: {
     allClear(state){
       state.title='';
@@ -42,6 +50,14 @@ export default new Vuex.Store({
       // state.user.name = payload.user.name;
       state.contents = payload.contents;
     },
+    successGetComments(state,payload){
+      state.comments.push({
+        commentsId:payload.commentsId,
+        commentsPassword:payload.commentsPassword,
+        commentsContents : payload.commentsContents
+      })
+      state.comments=''
+    },
     signUpSuccess(state){
       // state.user.name='',
       state.user.email='',
@@ -49,19 +65,28 @@ export default new Vuex.Store({
       state.user.passwordConfirm=''
     },
     loginSuccess(state,){
+      console.log('loginsuccess Mutation')
       state.isLogin='Y'
-      console.log(state.user);
-      // router.push({name:"Home"})
+      // console.log(state.user);
+      //let username = state.user.email;
+      //localStorage.setItem('username', username);
     },
     logout(state){
       // state.user.name='',
-      state.user.email='',
-      state.user.password='',
-      state.user.passwordConfirm='',
-      state.isLogin='N'
+      state.user.email='';
+      state.user.password='';
+      state.user.passwordConfirm='';
+      state.isLogin='N';
+      // localStorage.clear()
+    },
+    successFindDetail(state,payload){
+      state.results=payload;
     }
+
   },
+  
   actions: {
+    /* 게시판 관련 action */ 
     getList(context){
     axios.get('http://localhost:3000/board/getList')
       .then((res)=>{
@@ -115,7 +140,41 @@ export default new Vuex.Store({
         contents : con
       })
     },
-
+  //   commentsRegister(context,{getId}){
+  //     axios.post(`http://localhost:3000/board/detailList?id=${getId}`,{
+  //       id : this.state.comments.id,
+  //       commentsPassword : this.state.commentsPassword
+  //     })
+  //   },
+  //   getComments(context,{getId}){
+  //     axios.get(`http://localhost:3000/board/detailList?id=${getId}`)
+  //     .then((res)=>{
+  //     context.commit('successGetComments',res.data)
+  //   }).catch(err=>{
+  //     console.log(err);
+  //   })
+  // },
+  FindDetailTitle(context,payload){
+    console.log('payload is :',payload);
+    axios.post('http://localhost:3000/board/findDetailTitle',{payload})
+    .then((res)=>{
+      console.log(res.data);
+      context.commit('successFindDetail',res.data)
+    }).catch(err=>{
+      console.log(err);
+    })
+  },
+  FindDetailWriter(context,payload){
+    console.log('payload is :',payload);
+    axios.post('http://localhost:3000/board/findDetailWriter',{payload})
+    .then((res)=>{
+      console.log(res.data);
+      context.commit('successFindDetail',res.data)
+    }).catch(err=>{
+      console.log(err);
+    })
+  },
+    /* 로그인 관련 action */
   SignupProcess(context){
       axios.post('http://localhost:3000/user/signup',{
         email:this.state.user.email,
@@ -136,8 +195,8 @@ export default new Vuex.Store({
         email: this.state.user.email,
         password:this.state.user.password
       }).then(()=>{
+        router.push({name:"Home"});
         context.commit('loginSuccess');
-        router.push({name:"Home"})
       }).catch(err=>{
         console.log(err);
       })
