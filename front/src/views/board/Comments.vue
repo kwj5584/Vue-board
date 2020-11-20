@@ -19,9 +19,11 @@
  
 <button @click ='register'>등록</button>
 </div>
+<template>
   <div>
     <CommentList :id="$props.id"/>
   </div>
+  </template>
   </div>
   
 </template>
@@ -55,17 +57,19 @@ export default {
         password : this.comments.password,
         contents : this.comments.contents
       })
-      this.comments.id='',
-      this.comments.password='',
+      this.comments.id='';
+      this.comments.password='';
       this.comments.contents=''
+      window.location.reload()
     }
+    
   }
 }
 </script>
 
 <style>
 .comment{
-  position:absolute;
-  left:30%;
+  position: relative;
+  /* left:30%; */
 }
 </style>

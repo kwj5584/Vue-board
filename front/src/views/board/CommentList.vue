@@ -3,15 +3,13 @@
     <table class='commentlist'>
       <thead>
       <tr class='tr'>
-        <th>id</th>
-        <th>contents</th>
+      
       </tr>
       </thead>
     <tbody v-for='(list) in commentList' :key='list.idx'>
       <tr class='tr'>
-        
-        <td class='td'>{{list.id}}</td>
-        <td class='td'>{{list.contents}}</td>
+        <td >{{list.id}} : </td>
+        <td >{{list.contents}}</td>
         <button @click='deleteComment(list)' class='td'>삭제</button>
       </tr>
     </tbody>
@@ -54,18 +52,11 @@ export default {
 
 <style>
 .commentlist{
-  margin:auto;
-  justify-content: center;
-  position:absolute;
-  left:35%;
-  top:60%
+  /* margin:auto; */
+  /* justify-content: center; */
+  position: relative;
+  /* left:35%; */
+  
 }
-.tr{
-  border:1px solid black;
-  text-align:center;
-}
-.td{ 
-  border: 1px solid black;
-  text-overflow:clip;
-}
+
 </style>
