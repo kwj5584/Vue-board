@@ -45,7 +45,7 @@
  
   <div>
     <br>
-    <button @click='write'>글쓰기</button>
+    <button class='search' @click='write'>글쓰기</button>
   </div>
   </div>
 </template>
