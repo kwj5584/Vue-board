@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const dataList = require('../models/dataList');
+const commentList = require('../models/commentList');
 const cors = require('cors');
 router.use(cors())
 const bodyParser = require('body-parser');
@@ -39,6 +40,7 @@ router.post('/listAdd', async (req,res)=>{
 router.get(`/detailList`, (req,res) =>{ // 세부페이지에 부를 내용
   const getId = req.query.id
   dataList.findOne({ _id : getId }, { title:1,  contents:1,writer:1 },(err,datalist)=>{
+    console.log('detail :', datalist)
     if(err) return res.status(500).send({error : err});
     if(!datalist) return res.status(404).send({error: 'List not found'});
     res.send(datalist);
@@ -71,7 +73,9 @@ router.delete(`/delete`,(req,res)=>{
         console.log("Delete User : ", docs)
         res.send('success')
       }
-
+    })
+    commentList.deleteMany({boardNum:getId},(err)=>{
+      if(err) return res.status(500).send({error:err})
     })
   })
 
