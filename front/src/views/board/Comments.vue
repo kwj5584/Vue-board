@@ -1,41 +1,71 @@
 <template>
-  <div>
-    props is {{$props.id}}
+  <div >
     <br>
-<input type="text" placeholder="ID" v-model='$store.state.comments.commentsId'>
-<input type="password" placeholder="Password" v-model="$store.state.comments.commentsPassword">
-<br>
-<textarea v-model='$store.state.comments.commentsContents' placeholder="내용 입력" cols="48" rows="5"></textarea>
+  <div class='comment'>
+<input
+ type="text"
+  placeholder="ID"
+  v-model="comments.id"
+>
+<input
+ type="password" 
+ placeholder="Password" 
+ v-model="comments.password"
+>
+<br><br>
+<textarea
+ v-model='comments.contents' 
+ placeholder="내용 입력" cols="48" rows="5"></textarea>
+ 
 <button @click ='register'>등록</button>
+</div>
   <div>
-    <table>
-      <tbody style="border: 1px solid black">
-        <tr style="border: 1px solid black">
-          <td style="border: 1px solid black">testasdfas</td>
-          <td style="border: 1px solid black ">123123</td>
-        </tr>
-      </tbody>
-    </table>
+    <CommentList :id="$props.id"/>
   </div>
   </div>
   
 </template>
 
 <script>
+import axios from 'axios'
+import CommentList from './CommentList'
 export default {
-  created(){
-    console.log(this.$props.id);
-    this.$store.dispatch('getComments')
+  components:{
+    CommentList
   },
+  data(){
+    return{
+      comments:{
+        id:'',
+        password:'',
+        contents:''
+      }
+    }
+  },
+  // created(){
+  //   console.log('props id:',this.$props.id);
+  //   this.$store.dispatch('getComments',this.$props.id)
+  // },
   props:['id'],
   methods:{
     register(){
-      this.$store.dispatch('commentsRegister');
+      axios.post('http://localhost:3000/board/commentsRegister',{
+        boardNum : this.$props.id,
+        id : this.comments.id,
+        password : this.comments.password,
+        contents : this.comments.contents
+      })
+      this.comments.id='',
+      this.comments.password='',
+      this.comments.contents=''
     }
   }
 }
 </script>
 
 <style>
-
+.comment{
+  position:absolute;
+  left:30%;
+}
 </style>
