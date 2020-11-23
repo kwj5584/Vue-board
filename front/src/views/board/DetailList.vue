@@ -1,26 +1,29 @@
 <template>
 <div>
+  <NavBar/>
+  <hr>
   <div>
-    제목:{{$store.state.title}}
+    제목 : {{$store.state.title}}
     <br>
-    작성자:{{$store.state.writer}}
+    작성자 : {{$store.state.writer}}
     <br>
   </div>
   <hr>
 <viewer
-  height = '500px'
-  v-if='$store.state.contents != null' 
-  :initialValue="$store.state.contents "
+    minHeight="500px"
+    v-if='$store.state.contents != null' 
+    :initialValue="$store.state.contents "
 />
 
 <br><hr>
-<div>
-  <button @click="back">목록보기</button>
-  <button @click='onDelete'>삭제</button>
-  <button @click='onUpdate'>수정하기</button>
+<div class='mt-3'>
+  
+    <b-button size='sm' @click="back">목록보기</b-button>
+    <b-button size='sm' variant='danger' @click='onDelete'>삭제</b-button>
+    <b-button size='sm' @click='onUpdate'>수정하기</b-button>
+  
 </div>
-<hr><br>
-
+<hr>
 <div>
   <Comments :id="this.$route.query.id"></Comments>
 </div>
@@ -28,13 +31,15 @@
 </template>
 
 <script>
+import NavBar from '@/components/NavBar'
 import '@toast-ui/editor/dist/toastui-editor-viewer.css'; // Editor's Style
 import { Viewer } from '@toast-ui/vue-editor'
 import Comments from '@/views/board/Comments'
 export default {
  components: { 
    viewer: Viewer,
-   Comments : Comments
+   Comments,
+   NavBar
     },
     created(){
       const getId = this.$route.query.id
@@ -72,7 +77,7 @@ export default {
           }
         else{
          alert('비밀번호가 다릅니다.');
-         window.location.reload();
+         this.$router.push({name:'DetailList', query:{id:this.$route.query.id}})
       //  }
       }
         }else{

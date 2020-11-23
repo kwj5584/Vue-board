@@ -7,31 +7,31 @@
      </select>
      <template v-if='this.key==="title"'>
       <input
-    type="text"
-    style="width:25%" 
-    placeholder='Search Title..' 
-    v-model='$store.state.findDetail'
-    @keyup='findDetailTitle'
-   >
+          type="text"
+          style="height:22px; width:30%;"  
+          placeholder='Search Title..' 
+          v-model='$store.state.findDetail'
+          @keyup='findDetailTitle'
+      >
      </template>
      <template v-if='this.key==="writer"'>
-      <input
-    type="text"
-    style="width:25%" 
-    placeholder='Search Writer..' 
-    v-model='$store.state.findDetail'
-    @keyup='findDetailWriter'
-   >
+    <input
+      type="text"
+      style="width:25%" 
+      placeholder='Search Writer..' 
+      v-model='$store.state.findDetail'
+      @keyup='findDetailWriter'
+    >
      </template>
-
      </div>
-   <h1 style='text-align:center'>toast-ui editor</h1>
+     <hr>
+   <!-- <h1 style='text-align:center'>toast-ui editor</h1> -->
    <table class='board'>
      <thead>
        <tr class='tr'>
-         <th>글번호</th>
-         <th>제목</th>
-         <th>작성자</th>
+         <th class='td'>글번호</th>
+         <th class='td'>제목</th>
+         <th class='td'>작성자</th>
        </tr>
      </thead>
      <tbody @click='detail(result)' v-for='(result,idx) in $store.state.results' :key="result.idx">
@@ -42,10 +42,9 @@
        </tr>
      </tbody>
    </table>
- 
-  <div>
-    <br>
-    <button class='search' @click='write'>글쓰기</button>
+   <br>
+  <div class='search'>
+    <b-button size='sm' @click='write'>글쓰기</b-button>
   </div>
   </div>
 </template>
@@ -119,9 +118,7 @@ export default {
   border: 1px solid black;
   text-overflow:clip;
 }
-button{
-  margin:auto;
-}
+
 .search{
   display: flex;
   justify-content: center;

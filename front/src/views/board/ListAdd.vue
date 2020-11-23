@@ -1,5 +1,7 @@
 <template>
 <div>
+  <NavBar/>
+  <hr>
   <textarea v-model='$store.state.title' cols='40' placeholder="제목 입력"/>
   <br>
   <editor
@@ -17,6 +19,7 @@
 </template>
 
 <script>
+import NavBar from '@/components/NavBar'
 import 'codemirror/lib/codemirror.css';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/vue-editor'
@@ -24,6 +27,7 @@ import { Editor } from '@toast-ui/vue-editor'
 export default {
   components: {
     'editor': Editor,
+    NavBar
   },
 
   methods:{

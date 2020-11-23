@@ -2,28 +2,29 @@
   <div >
     <br>
   <div class='comment'>
+  <form>
 <input
- type="text"
+  type="text"
   placeholder="ID"
   v-model="comments.id"
+  style="width:100px"
 >
 <input
  type="password" 
  placeholder="Password" 
+ style="width:150px"
  v-model="comments.password"
 >
 <br><br>
 <textarea
  v-model='comments.contents' 
- placeholder="내용 입력" cols="48" rows="5"></textarea>
- 
-<button @click ='register'>등록</button>
+ placeholder="내용 입력" cols="40" rows="2"></textarea>
+<b-button size='sm' variant='primary' @click ='register'>등록</b-button>
+</form>
 </div>
-<template>
-  <div>
+  <hr>
     <CommentList :id="$props.id"/>
-  </div>
-  </template>
+  
   </div>
   
 </template>
@@ -56,11 +57,14 @@ export default {
         id : this.comments.id,
         password : this.comments.password,
         contents : this.comments.contents
-      })
-      this.comments.id='';
+      }).then(()=>{
+        this.comments.id='';
       this.comments.password='';
       this.comments.contents=''
       window.location.reload()
+      }).catch(err=>{
+        console.log(err)
+      })
     }
     
   }
