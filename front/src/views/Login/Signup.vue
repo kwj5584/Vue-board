@@ -1,14 +1,15 @@
 <template>
   <div>
-    <label name='E-mail'>
-    <input 
-    type="email"
-    v-model="$store.state.user.email"
-    placeholder="E-mail"
-    required
-    />
-    </label>
-    <br>
+    <h4 style="text-align:center">SignUp Page</h4>
+    <b-form>
+      <br>
+     <b-form-input
+          label='E-mail'
+          v-model="$store.state.user.email"
+          type="email"
+          required
+          placeholder="Enter email"
+        />
     <!-- <input  
     type='text'
     v-model="$store.state.user.name"
@@ -16,21 +17,24 @@
     required
     /> -->
     <br>
-    <input type="password"
-    v-model="$store.state.user.password"
-    placeholder="Password"
-    required
-    >
+     <b-form-input
+          v-model="$store.state.user.password"
+          type="password"
+          required
+          placeholder="Enter Password"
+        />
     <br>
-    <input type="password"
-    v-model="$store.state.user.passwordConfirm"
-    placeholder="PasswordConfirm"
-    required
-    @keyup.enter="submit"
-    >
+     <b-form-input
+          v-model="$store.state.user.passwordConfirm"
+          type="password"
+          required
+          placeholder="Password Confirm"
+          @keyup.enter="submit"
+        />
     <br>
-    <button @click='submit'>SignUp</button>
-    <button @click='back'>Reset</button>
+     <b-button @click="submit" variant="primary">Submit</b-button>
+      <b-button @click="back" variant="danger">Home</b-button>
+      </b-form>
   </div>
 </template>
 
@@ -46,7 +50,6 @@ export default {
       }
     },
     back(){
-      this.$store.commit('logout');
       this.$router.push({name:"Home"});
     }
   }

@@ -1,28 +1,37 @@
 <template>
   <div>
-    <input 
+    <NavBar/>
+    <br>
+    <b-form>
+    <b-form-input 
     type="email" 
     placeholder="Enter E-mail" 
     v-model='$store.state.user.email'
+    style="max-width:300px align-items:center"
     @keyup.enter="login"
-    >
+    />
     <br>
-    <input 
+    <b-form-input
     type="password" 
     placeholder="Enter Password" 
     v-model="$store.state.user.password"
     @keyup.enter="login"
-    >
+    />
     <br>
     
-    <button @click='login'>Login</button>
-    <button @click='back'>reset</button>
-    <button @click="signup">Sign up</button>
+    <b-button @click='login' variant='primary'>Login</b-button>
+    <b-button @click='back' variant='danger'>Home</b-button>
+    <b-button @click="signup" variant='secondary'>Sign up</b-button>
+    </b-form>
   </div>
 </template>
 
 <script>
+import NavBar from '@/components/NavBar'
 export default {
+  components:{
+    NavBar
+  },
   methods:{
     login(){
       this.$store.dispatch('LoginProcess');
