@@ -1,29 +1,28 @@
 <template>
   <div>
-    <button @click="login">로그인</button>
-    <button @click="signup">회원가입</button>
+    <NavBar></NavBar>
+    
+    <br>
+    <h6 v-if='$store.state.user.email !==""' style="text-align:center">
+      반갑습니다 {{$store.state.user.email}}님
+    </h6>
+    <br>
     <List/>
   </div>
 </template>
 
 <script>
 import List from '@/views/board/List'
-
+import NavBar from '@/components/NavBar'
 export default {
   components: {
     List, 
+    NavBar
   },
   data(){
     return{
     }
   },
-  methods:{
-    login(){
-      this.$router.push({name:"Login"})
-    },
-    signup(){
-      this.$router.push({name:"Signup"})
-    }
-  }
+  
 }
 </script>
