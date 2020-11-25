@@ -7,16 +7,43 @@ router.use(cors())
 const bodyParser = require('body-parser');
 router.use(bodyParser.json())
 // const userList = require('../models/userList');
-
+let commentCount = []
+let count=0;
 router.get('/getList', (req,res)=>{ // 리스트에 부를 내용
-  dataList.find({},{ _id:1, title:1,writer:1},(err,datalist)=>{
-     if(err) return res.status(500).send({error:err})
-     res.send(datalist)
-  })
+  dataList.find({},{ _id:1, title:1,writer:1,views:1},(err,datalist)=>{
+     if(err) return res.status(500).json({error:err})
+     if(!datalist) return res.status(404).json({message : 'datalist not found'})
+
+    res.send(datalist)
+    })
 })
 
+router.get('/getCommentList', (req,res)=>{
+  dataList.find({},{_id:1}, (err,datalist)=>{
+    if(err) console.log(err);
+
+     commentList.find({},{boardNum:1},(err,commentlist)=>{
+       if(err) console.log(err);
+
+      for(var i=0; i<datalist.length; i++){
+        for(var j=0; j<commentlist.length; j++){
+          // console.log('comentlist : ',commentlist[j].boardNum)
+          if(commentlist[j].boardNum === datalist[i]._id){
+            count++;
+          }
+        }
+        commentCount[i] = count;
+        count=0;
+      }
+      // console.log('commentcount :',commentCount)
+       return true;
+     }) // commentList.find end
+  })
+  res.send(commentCount)
+  })
+
 router.post('/listAdd', async (req,res)=>{
-  console.log('request is :', req.body)
+  // console.log('request is :', req.body)
   const title = req.body.title;
   const writer = req.body.writer;
   const contents = req.body.contents
@@ -39,8 +66,10 @@ router.post('/listAdd', async (req,res)=>{
 
 router.get(`/detailList`, (req,res) =>{ // 세부페이지에 부를 내용
   const getId = req.query.id
-  dataList.findOne({ _id : getId }, { title:1,  contents:1,writer:1 },(err,datalist)=>{
-    console.log('detail :', datalist)
+  dataList.findOne({ _id : getId }, { title:1,  contents:1,writer:1, views:1 },(err,datalist)=>{
+    // console.log('detail :', datalist);
+    datalist.views++;
+    datalist.save();
     if(err) return res.status(500).send({error : err});
     if(!datalist) return res.status(404).send({error: 'List not found'});
     res.send(datalist);
@@ -48,8 +77,8 @@ router.get(`/detailList`, (req,res) =>{ // 세부페이지에 부를 내용
 })
 
 router.post('/findDetailTitle',(req,res)=>{
-  console.log('request : ',req.body.payload)
-  dataList.find({title: {$regex : req.body.payload } },{title:1, writer:1},(err,datalist)=>{
+  // console.log('request : ',req.body.payload)
+  dataList.find({title: {$regex : req.body.payload } },{title:1, writer:1,views:1},(err,datalist)=>{
     if(err) return res.status(500).send({error : err});
     if(!datalist) return res.status(404).send({error : 'List not found'});
     res.send(datalist);
@@ -57,8 +86,8 @@ router.post('/findDetailTitle',(req,res)=>{
 })
 
 router.post('/findDetailWriter',(req,res)=>{
-  console.log('request : ',req.body.payload)
-  dataList.find({writer: {$regex : req.body.payload } },{title:1, writer:1},(err,datalist)=>{
+  // console.log('request : ',req.body.payload)
+  dataList.find({writer: {$regex : req.body.payload } },{title:1, writer:1,views:1},(err,datalist)=>{
     if(err) return res.status(500).send({error : err});
     if(!datalist) return res.status(404).send({error : 'List not found'});
     res.send(datalist);
@@ -70,7 +99,7 @@ router.delete(`/delete`,(req,res)=>{
     dataList.findOneAndDelete({_id:getId},(err,docs)=>{
       if(err){console.log(err)}
       else{ 
-        console.log("Delete User : ", docs)
+        // console.log("Delete User : ", docs)
         res.send('success')
       }
     })
@@ -87,7 +116,7 @@ router.delete(`/delete`,(req,res)=>{
          if(err) {return res.status(500).send({error: err})}
          else{
          res.send(datalist);
-         console.log(datalist)
+        //  console.log(datalist)
         }
        })
   })
