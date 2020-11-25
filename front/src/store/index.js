@@ -8,12 +8,14 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    title : '',
-    writer :'',
-    contents : null,
+    title : '', // 게시글 제목
+    writer :'', // 게시글 작성자
+    contents : null, // 게시글 내용
+    views:0, // 조회수
     findDetail : '', // 조회 조건
-    results : [],
-    isLogin : 'N',
+    results : [], // 게시글 불러올 데이터 저장할 배열
+    isLogin : 'N', // 로그인 여부
+    commentsCount:[], // 댓글 수 불러올 데이터 저장할 배열
 
     nowUserInfo:{
       email:'',
@@ -32,12 +34,12 @@ export default new Vuex.Store({
     //   contents:''
     // },
 
-    commentsList:[],
+    commentsList:[], // 댓글 리스트 저장할 배열
 
     editorOptions:{
       useCommandShortcut:false,
              usageStatistics:true,
-             useDefaultHTMLSanitizer:false, // 아마도 html 태그 관련인듯?
+             useDefaultHTMLSanitizer:false, 
              hideModeSwitch:true, // markdown, wysiwyg 선택하는 스위치
     }
 
@@ -51,10 +53,16 @@ export default new Vuex.Store({
       state.results = payload;
       console.log(state.results)
     },
+    successGetCommentList(state,payload){
+      state.commentsCount = payload;
+      console.log('댓글수 :',state.commentsCount)
+      document.location.href; // 새로고침
+    },
     successDetailList(state,payload){
       state.title = payload.title;
       state.writer = payload.writer;
       state.contents = payload.contents;
+      state.views = payload.views;
     },
     commentRegisterSuccess(state){
       state.comments='';
@@ -67,36 +75,34 @@ export default new Vuex.Store({
     //   })
     //   state.comments=''
     // },
-    signUpSuccess(state){
-      // state.user.name='',
+    cleanUserInfo(state){
       state.user.email='',
       state.user.password='',
       state.user.passwordConfirm=''
     },
     loginSuccess(state){
-      console.log('loginsuccess Mutation')
       state.isLogin='Y'
       state.nowUserInfo.email = state.user.email
       state.nowUserInfo.password = state.user.password
-
+      state.user.email=''
+      state.user.password=''
+      state.user.passwordConfirm='';
+      // console.log('login user:',state.nowUserInfo);
     },
     logout(state){
-      // state.user.name='',
-      state.user.email='';
-      state.user.password='';
-      state.user.passwordConfirm='';
+      state.nowUserInfo.email='';
+      state.nowUserInfo.password='';
       state.isLogin='N';
-      // localStorage.clear()
     },
     successFindDetail(state,payload){
       state.results=payload;
     }
-
   },
   
   actions: {
     /* 게시판 관련 action */ 
-    getList(context){
+    /* 게시글 불러오기 */
+    getList(context){  
     axios.get('http://localhost:3000/board/getList')
       .then((res)=>{
         context.commit('successGetList',res.data);
@@ -105,15 +111,25 @@ export default new Vuex.Store({
       })
       context.commit('allClear')
   },
-
-    listAdd(context,payload){
+    /* 댓글 수 불러오기 */
+    getCommentList(context){  
+      axios.get('http://localhost:3000/board/getCommentList')
+      .then((res)=>{
+        context.commit('successGetCommentList',res.data)
+      }).catch(err=>{
+        console.log(err);
+      })
+    },
+    /* 게시글 쓰기 */
+    listAdd(context,payload){  
       axios.post('http://localhost:3000/board/listAdd',{
         title : this.state.title,
-        writer : this.state.user.email,
+        writer : this.state.nowUserInfo.email,
         contents : payload        
       })
     },
-    detailPage(context,payload){
+    /* 게시글 상세내용 */
+    detailPage(context,payload){  
       console.log('action id :',payload)
       axios.get(`http://localhost:3000/board/detailList?id=${payload}`,{payload})
       .then((res)=>{
@@ -122,8 +138,8 @@ export default new Vuex.Store({
         console.log(err);
       })
     },
-
-    deleteList(context,payload){
+    /* 게시글 삭제 */
+    deleteList(context,payload){  
       console.log(payload)
       axios.delete(`http://localhost:3000/board/delete?id=${payload}`)
       .then(()=>{
@@ -132,8 +148,8 @@ export default new Vuex.Store({
         console.log(err);
       })
     },
-    
-    updateProcess(context,payload){
+    /* 게시글 수정하기 위해 상세내용 가져오기 */
+    updateProcess(context,payload){ 
       axios.get(`http://localhost:3000/board/detailList?id=${payload}`,{payload})
       .then((res)=>{
         context.commit('successDetailList',res.data)
@@ -141,34 +157,16 @@ export default new Vuex.Store({
         console.log(err);
       })
     },
-
-    updateList(context,{getId,con}){
+    /* 게시글 수정 */
+    updateList(context,{getId,con}){ 
       axios.patch(`http://localhost:3000/board/updatePage?id=${getId}`,{
         getId,
         title : this.state.title,
         contents : con
       })
     },
-    // commentsRegister(context,payload){
-    //   console.log('store getid : ',payload)
-    //   axios.post(`http://localhost:3000/comments/commentsRegister?id=${payload}`,{
-    //     payload,
-    //     id : this.state.comments.id,
-    //     password : this.state.comments.password,
-    //     contents : this.state.comments.contents
-    //   }) // 디비에 저장
-    //   },
-      /** 댓글 가져오기 */
-  //   getComments(context,payload){
-  //     axios.get(`http://localhost:3000/comments/getComments?id=${payload}`,{payload})
-  //     .then((res)=>{
-  //     context.commit('successGetComments',res.data)
-  //   }).catch(err=>{
-  //     console.log(err);
-  //   })
-  // },
   /* 제목관련 게시글 찾기 */
-  FindDetailTitle(context,payload){
+  FindDetailTitle(context,payload){ 
     console.log('payload is :',payload);
     axios.post('http://localhost:3000/board/findDetailTitle',{payload})
     .then((res)=>{
@@ -190,20 +188,21 @@ export default new Vuex.Store({
     })
   },
     /* 로그인 관련 action */
+    /* 회원가입  */
   SignupProcess(context){
       axios.post('http://localhost:3000/user/signup',{
         email:this.state.user.email,
         // name:this.state.user.name,
         password:this.state.user.password
       }).then(()=>{
-        context.commit('signUpSuccess')
+        context.commit('cleanUserInfo')
         router.push({name:"Login"})
-        console.log('signup success')
+        alert('회원가입 성공했습니다.')
       }).catch( (err) =>{
-        console.log(err);
+        alert(err)
       }) 
     },
-
+    /* 로그인 */
     LoginProcess(context){
       // let selectedUser = null;
       axios.post('http://localhost:3000/user/login',{
@@ -213,9 +212,8 @@ export default new Vuex.Store({
         alert('로그인성공')
         context.commit('loginSuccess');
         router.push({name:"Home"});
-      }).catch(err=>{
-        alert('비밀번호가 다릅니다.')
-        console.log(err);
+      }).catch(()=>{
+        alert('이메일 혹은 비밀번호가 다릅니다.')
       })
       },
     },
@@ -223,6 +221,6 @@ export default new Vuex.Store({
   modules: {
   },
   plugins:[
-    createPersistedState()
+    createPersistedState({ storage : window.sessionStorage })
   ]
 })
