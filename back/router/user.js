@@ -43,7 +43,7 @@ async (req,res,next)=> {
     });
 
     const result = await userlist.save();
-    console.log('new user is :',result)
+    // console.log('new user is :',result)
     res.status(201).json({
       message : 'user created',
       userId : result._id
@@ -59,17 +59,15 @@ async (req,res,next)=> {
 router.post('/login', async(req,res,next)=>{
     const email = req.body.email;
     const password = req.body.password;
-    console.log('type:',typeof(email))
-    console.log(email,'\n',password);
     userList.findOne({email}, async (err,user)=>{
       if(!user){
-        return Promise.reject('Email not exist!')
+        return res.status(500).send({error:err})
       }
       else{
-        console.log('login:',  user);
+        // console.log('login:',  user);
         const result = await bcrypt.compareSync(password,user.password);
         if(result===false){
-          return Promise.reject('Password invalid')
+          return res.status(500).send({error:err})
         }
         else{
           res.status(201).json({
@@ -80,25 +78,5 @@ router.post('/login', async(req,res,next)=>{
     })
     
   });
-//   userList.findOne({email}, async (user)=>{
-//     if(!user){
-//       console.log('Email이 유효하지않습니다.')
-//     }
-//     else{
-//       console.log(user);
-//     }
-//   });
-//   userList.findOne({email}, async(user)=>{
-//       console.log('user password :',password ,'dbpassword : ',user.password)
-//       console.log(hashedPassword)
-//       const result =  await bcrypt.compare(password, user.password);
-//       if(result===false){
-//         console.log('비밀번호가 다릅니다.');
-//       }
-//       else{
-//         console.log('login success');
-//       }
-//   } 
-// )
-// })
+
 module.exports = router;
