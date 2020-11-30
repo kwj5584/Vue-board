@@ -1,32 +1,33 @@
 <template>
   <div >
-    <br>
-  <div class='comment'>
-  <form>
-<input
+  <div>
+  <b-form inline>
+<b-form-input
   type="text"
   placeholder="ID"
   v-model="comments.id"
-  style="width:100px"
->
-<input
+  style="width:150px"
+/>
+<b-form-input
  type="password" 
  placeholder="Password" 
  style="width:150px"
  v-model="comments.password"
->
-<br><br>
-<textarea
+/>
+</b-form>
+<br>
+<b-form-textarea
  v-model='comments.contents' 
- placeholder="내용 입력" cols="40" rows="2"></textarea>
-<b-button size='sm' variant='primary' @click ='register'>등록</b-button>
-</form>
+ style="width:300px"
+ placeholder="내용 입력" cols="40" rows="2"/>
+ <br>
+<b-button variant='primary' @click ='register'>등록</b-button>
+
 </div>
+
   <hr>
     <CommentList :id="$props.id"/>
-  
   </div>
-  
 </template>
 
 <script>
