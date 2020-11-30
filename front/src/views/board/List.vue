@@ -10,7 +10,7 @@
           type="text"
           style="height:22px; width:30%;"  
           placeholder='Search Title..' 
-          v-model='$store.state.findDetail'
+          v-model='findTitle'
           @keyup='findDetailTitle'
       >
      </template>
@@ -19,38 +19,54 @@
       type="text"
       style="height:22px; width:30%" 
       placeholder='Search Writer..' 
-      v-model='$store.state.findDetail'
+      v-model='findWriter'
       @keyup='findDetailWriter'
     >
      </template>
      </div>
      <hr>
-   <!-- <h1 style='text-align:center'>toast-ui editor</h1> -->
-   <table class='board'>
-     <thead>
-       <tr class='tr'>
-         <th class='td'>글번호</th>
-         <th class='td'>제목</th>
-         <th class='td'>작성자</th>
-         <th class='td'>조회수</th>
-       </tr>
-     </thead>
-     <tbody @click='detail(result)' v-for='(result,idx) in $store.state.results' :key="result.idx">
-       <tr class='tr'>
-         <td class='td' width="10%">{{idx+1}}</td>
-         <td class='td' width="50%">{{result.title}}
-           <small v-if="$store.state.commentsCount">({{$store.state.commentsCount[idx]}})</small>
-         </td>
-         <td class='td' width="30%">{{result.writer}}</td>
-         <td class='td' wdith='10%'>{{result.views}}</td>
-       </tr>
-     </tbody>
-   </table>
+<div>
+
+   <b-table 
+   @row-clicked="detail" 
+   :items='$store.state.results' 
+   :fields='fields'
+   :per-page='perPage'
+   :current-page='currentPage'
+   id='boardList'
+   >
+     <template #cell(글번호)='data'>
+       {{data.index+1}}
+     </template>
+     <template #cell(제목)='data'>
+       {{data.item.title}}
+       <small v-if="$store.state.commentsCount[data.index]!==0">({{$store.state.commentsCount[data.index]}})</small>
+     </template>
+     <template #cell(작성자)='data'>
+      {{data.item.writer}}      
+     </template>
+     <template #cell(조회수)='data'>
+         {{data.item.views}}
+     </template>
+   </b-table>   
+</div>
+
    <br>
   <div class='search'>
     <b-button size='sm' @click='write'>글쓰기</b-button>
   </div>
+
+  <div>
+    <br>
+  <b-pagination 
+    align=center
+    :total-rows='rows'
+    :per-page='perPage'
+    v-model='currentPage'
+    aria-controls="boardList"
+   ></b-pagination>
   </div>
+</div>
 </template>
 
 <script>
@@ -58,15 +74,28 @@
 export default {
   data(){
     return{
-    key:'title'
+    key:'title',
+    perPage:5,
+    currentPage:1,
+    fields:['글번호','제목','작성자','조회수'],
+    findTitle:'',
+    findWriter:'',
     }
   },
-  created() {
-    this.$store.dispatch('getList');
-    this.$store.dispatch('getCommentList');
+beforeCreate(){
+  this.$store.dispatch('getList');
+  this.items=this.$store.state.results;
+},
+  created() {  
+    this.$store.dispatch('getCommentList')
   },
-  components:{
-  },
+  computed: {
+      rows() {
+        return this.items.length
+      },
+    },
+
+  /*<---------------------------- methods ---------------------------->*/
   methods:{
     onChange(event){
       this.key=event.target.value
@@ -81,13 +110,12 @@ export default {
       }
     },
     
-    detail(result){
-      console.log('clicked id is', result._id)
-      this.$router.push({ name: 'DetailList', query: {id: result._id }
+    detail(items,idx){
+      this.$router.push({ name: 'DetailList', query: {id: this.items[idx]._id }
       })
      },
      findDetailTitle(){
-       const find = this.$store.state.findDetail
+       const find = this.findTitle
        if(find !== ''){
        this.$store.dispatch('FindDetailTitle',find)
        }
@@ -96,7 +124,7 @@ export default {
        }
      },
     findDetailWriter(){
-       const find = this.$store.state.findDetail
+       const find = this.findWriter
        if(find !== ''){
        this.$store.dispatch('FindDetailWriter',find)
        }
