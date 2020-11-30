@@ -14,14 +14,12 @@
     v-if='$store.state.contents != null' 
     :initialValue="$store.state.contents "
 />
-
-<br><hr>
+<hr>
 <div class='mt-3'>
   
     <b-button size='sm' @click="back">목록보기</b-button>
     <b-button size='sm' variant='danger' @click='onDelete'>삭제</b-button>
-    <b-button size='sm' @click='onUpdate'>수정하기</b-button>
-  
+    <b-button size='sm' @click='onUpdate'>수정하기</b-button>  
 </div>
 <hr>
 <div>
@@ -45,6 +43,7 @@ export default {
       const getId = this.$route.query.id
       this.$store.dispatch('detailPage',getId)
       console.log('작성자 : ',this.$store.state.writer, '로그인한 사람:',this.$store.state.nowUserInfo.email)
+      this.$store.dispatch('getCommentList');
       },
     methods:{
       back(){
@@ -72,7 +71,7 @@ export default {
       onUpdate(){
         if(this.$store.state.writer===this.$store.state.nowUserInfo.email){
           const passwd = prompt('비밀번호를 입력하세요');
-          if(this.$store.state.user.password === passwd){
+          if(this.$store.state.nowUserInfo.password === passwd){
           this.$router.push({name : 'UpdatePage', query: { id: this.$route.query.id }})
           }
         else{
