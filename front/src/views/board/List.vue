@@ -26,7 +26,7 @@
      </div>
      <hr>
 <div>
-
+now : {{currentPage}}
    <b-table 
    @row-clicked="detail" 
    :items='$store.state.results' 
@@ -35,12 +35,20 @@
    :current-page='currentPage'
    id='boardList'
    >
+   
      <template #cell(글번호)='data'>
-       {{data.index+1}}
+       {{
+         items.length - 
+         data.index -
+           perPage*(currentPage-1)
+         
+       }}
+       
+       <!-- {{data.index+1}} -->
      </template>
      <template #cell(제목)='data'>
        {{data.item.title}}
-       <small v-if="$store.state.commentsCount[data.index]!==0">({{$store.state.commentsCount[data.index]}})</small>
+       <small v-if="$store.state.commentsCount[data.index]!==0"> ({{$store.state.commentsCount[data.index]}}) </small>
      </template>
      <template #cell(작성자)='data'>
       {{data.item.writer}}      
@@ -80,14 +88,15 @@ export default {
     fields:['글번호','제목','작성자','조회수'],
     findTitle:'',
     findWriter:'',
+    // items:[],
     }
   },
 beforeCreate(){
   this.$store.dispatch('getList');
   this.items=this.$store.state.results;
+  this.$store.dispatch('getCommentList')
 },
   created() {  
-    this.$store.dispatch('getCommentList')
   },
   computed: {
       rows() {
