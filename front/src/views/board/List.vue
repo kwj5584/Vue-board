@@ -37,18 +37,22 @@ now : {{currentPage}}
    >
    
      <template #cell(글번호)='data'>
-       {{
+       <!--
+         역순
+          {{
          items.length - 
          data.index -
            perPage*(currentPage-1)
-         
+       }} -->
+       {{
+         data.index+ perPage*(currentPage-1)+1
        }}
-       
-       <!-- {{data.index+1}} -->
      </template>
      <template #cell(제목)='data'>
        {{data.item.title}}
-       <small v-if="$store.state.commentsCount[data.index]!==0"> ({{$store.state.commentsCount[data.index]}}) </small>
+       <small v-if="$store.state.commentsCount[data.index + perPage*(currentPage-1)] !==0"> 
+         ({{$store.state.commentsCount[data.index  + perPage*(currentPage-1)]}}) 
+         </small>
      </template>
      <template #cell(작성자)='data'>
       {{data.item.writer}}      
@@ -95,6 +99,7 @@ beforeCreate(){
   this.$store.dispatch('getList');
   this.items=this.$store.state.results;
   this.$store.dispatch('getCommentList')
+  console.log('created :',this.items)
 },
   created() {  
   },
@@ -120,7 +125,10 @@ beforeCreate(){
     },
     
     detail(items,idx){
-      this.$router.push({ name: 'DetailList', query: {id: this.items[idx]._id }
+      const index = idx+ this.perPage*(this.currentPage-1);
+      console.log('clicked ',index+1)
+      // console.log( this.items[idx+ this.perPage*(this.currentPage-1)+1]._id)
+      this.$router.push({ name: 'DetailList', query: {id: this.items[index]._id }
       })
      },
      findDetailTitle(){
